@@ -21,45 +21,69 @@
 
 ### Data класс
 ```kotlin*/
+//======================= DATA CLASS AMINO_ACID_SEQUENCE =========================//
 data class AminoAcidSequence(
     val name: String,
     val sequence: String
-){
+)
 
-}
-/*
 
-### Основной класс
-```kotlin*/
+//======================= CLASS DNA_ANALYZER ===========================//
 class DnaAnalyzer(dna_sequence: String) {
+
+    private val validate_dna : String
+    private val rna_sequence : String
+    val mino_acid_list = mutableListOf<AminoAcidSequence>()
+
+
     init{
+        validate_dna = dna_sequence.uppercase()
         validationDNA()
-    }
-    private var validate_dna = dna_sequence.uppercase()
-    var mino_acid_list =listOf<String>()
-
-    fun KeepOrfToList(i:Int){
-        for (k in i until validate_dna.length-3 step 3){
-            mino_acid_list.
-        }
+        rna_sequence=TranscriptDNAToRNA()
     }
 
-    fun findAllOrfs(): List<String> {
 
-        for(i in 0 until validate_dna.length-2){
-            if(validate_dna[i]=='A' && validate_dna[i+1]=='U'&& validate_dna[i+2]=='G'){
-                KeepOrfToList(i)
+    fun KeepOrfToList(i:Int) :String{
+        val protein_builder = StringBuilder()
+        for (k in i until rna_sequence.length-3 step 3){
+            val codon = rna_sequence.substring(k,k+3)
+            if (CodonTable.table[codon]=='B'){
+                break
+            }
+            protein_builder.append(CodonTable.table[codon])
+        }
+        return protein_builder.toString()
+    }
+
+
+    fun findAllOrfs(): List<AminoAcidSequence> {
+        var protein_sequence:String
+        var counter_proteins =0
+
+        for(frame in 0..2){
+            for(i in frame until rna_sequence.length-3 step 3){
+                if(rna_sequence.substring(i,i+3)=="AUG"){
+                    protein_sequence = KeepOrfToList(i)
+
+                    if (protein_sequence.length >=2)
+                    {
+                        val protein_name = "protein_$counter_proteins"
+                        mino_acid_list.add(AminoAcidSequence(protein_name, protein_sequence))
+                        counter_proteins++
+                    }
+                }
             }
         }
-        return (mino_acid_list)
-            }
-    fun validationDNA()
-    {
+        return (mino_acid_list.sortedByDescending { it.sequence.length })
+    }
+
+
+    private fun validationDNA() {
         var testing_dna = validate_dna
         val stop_codon = listOf("TAA","TAG","TGA")
 
-        if (testing_dna.length<12 || testing_dna.isEmpty())
-            throw IllegalArgumentException("DNA can't be empty or had length < 6 and must include 2 amino acid")
+        if (testing_dna.length%3!=0)
+            throw IllegalArgumentException("DNA length must be divisible by three")
 
         if (testing_dna.contains("ATG").not())
             throw IllegalArgumentException("DNA doesn't contain start-codon")
@@ -67,11 +91,13 @@ class DnaAnalyzer(dna_sequence: String) {
         if (stop_codon.any{testing_dna.contains(it)}.not())
             throw IllegalArgumentException("DNA doesn't contain stop-codon")
 
+        if (testing_dna.length<12 || testing_dna.isEmpty())
+            throw IllegalArgumentException("DNA can't be empty or had length < 6 and must include 2 amino acid")
 
         if (testing_dna.filter{it !in "AGTC"}.toSet().isNotEmpty())
             throw IllegalArgumentException("DNA consist onle A, C, G, T amino acid")
-
     }
+
 
     private fun TranscriptDNAToRNA():String {
         return(validate_dna.replace('T','U'))
@@ -80,7 +106,7 @@ class DnaAnalyzer(dna_sequence: String) {
 
 }
 
-
+//========================= OBJECT CODON_TABLE ========================================//
 object CodonTable {
     val table: Map<String, Char> = mapOf(
         "AUG" to 'M',
@@ -106,6 +132,53 @@ object CodonTable {
 
     )
 }
+
+
+fun main(){
+    println("======TESTING=======")
+    try {
+        val test_1 = DnaAnalyzer("ATGGCTAGTTGA")
+        println("test_1 : dna = ATGGCTAGTTGA \n result: ${test_1.findAllOrfs()} ")
+    }catch (e: IllegalArgumentException){
+        println("output error : ${e.message}")
+    }
+    try {
+        val test_2 = DnaAnalyzer("ATGGCTAGTTGAATGGAT")
+        println("test_2 : dna = ATGGCTAGTTGAATGGAT \n result: ${test_2.findAllOrfs()} ")
+
+    } catch (e: IllegalArgumentException)
+    {
+        println("output error : ${e.message}")
+    }
+    try {
+        val test_3 = DnaAnalyzer("ATGXYZ")
+        println("test_3 : dna = ATGXYZ \nresult: ${test_3.findAllOrfs()} ")
+    }catch (e: IllegalArgumentException){
+        println("output error : ${e.message}")
+    }
+    try {
+        val test_4 = DnaAnalyzer("ATGGCT")
+        println("test_4 : dna = ATGGCT \nresult: ${test_4.findAllOrfs()} ")
+    }catch (e: IllegalArgumentException){
+        println("output error : ${e.message}")
+    }
+    try{
+        val test_5 = DnaAnalyzer("GCTAGTTGA")
+        println("test_5 : dna = GCTAGTTGA \nresult: ${test_5.findAllOrfs()} ")
+    }catch (e: IllegalArgumentException){
+        println("output error : ${e.message}")
+    }
+
+    println("Inpute sequence:_")
+    try{
+        val user_sequence: String = readLine().toString()
+        val user_search = DnaAnalyzer(user_sequence)
+        println("result: ${user_search.findAllOrfs()} ")
+    }catch (e: IllegalArgumentException){
+        println("output error : ${e.message}")
+    }
+
+}
 /*
 
 ## Требования и ограничения
@@ -130,7 +203,7 @@ object CodonTable {
 
 **Вход:**
 ```kotlin*/
-val analyzer = DnaAnalyzer("ATGGCTAGTTGA")
+//val analyzer = DnaAnalyzer("ATGGCTAGTTGA")
 //val orfs = analyzer.findAllOrfs()
 /*```
 
