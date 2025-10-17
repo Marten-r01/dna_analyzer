@@ -12,7 +12,7 @@ class DnaAnalyzer(dna_sequence: String) {
     private val validate_dna : String
     private val rna_sequence : String
     val mino_acid_list = mutableListOf<AminoAcidSequence>()
-
+    var counter_proteins =0
 
     init{
         validate_dna = dna_sequence.uppercase()
@@ -36,10 +36,9 @@ class DnaAnalyzer(dna_sequence: String) {
 
     fun findAllOrfs(): List<AminoAcidSequence> {
         var protein_sequence:String
-        var counter_proteins =0
 
-        for(frame in 0..2){
-            for(i in frame until rna_sequence.length-3 step 3){
+
+            for(i in 0 until rna_sequence.length-3 step 3){
                 if(rna_sequence.substring(i,i+3)=="AUG"){
                     protein_sequence = KeepOrfToList(i)
 
@@ -51,7 +50,7 @@ class DnaAnalyzer(dna_sequence: String) {
                     }
                 }
             }
-        }
+
         return (mino_acid_list.sortedByDescending { it.sequence.length })
     }
 
