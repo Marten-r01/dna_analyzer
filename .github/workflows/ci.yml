@@ -1,51 +1,53 @@
-name: Kotlin CI
+name: Java CI with Gradle on Windows
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "master", "develop" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: 'gradle'
         
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      
-    - name: Cache Gradle dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-      
+    - name: Display Windows info
+      run: |
+        echo "Running on Windows"
+        systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+        
     - name: Build with Gradle
-      run: ./gradlew build
+      run: .\gradlew.bat build
       
     - name: Run tests
-      run: ./gradlew test
+      run: .\gradlew.bat test
+      
+    - name: Run tests with detailed output
+      run: .\gradlew.bat test --info
       
     - name: Check code style with ktlint
-      run: ./gradlew ktlintCheck
+      run: .\gradlew.bat ktlintCheck
       
     - name: Generate test report
       if: always()
-      uses: dorny/test-reporter@v1
+      run: |
+        .\gradlew.bat test
+        echo "Test results generated in build/reports/tests/"
+        
+    - name: Upload test results
+      if: failure()
+      uses: actions/upload-artifact@v4
       with:
-        name: JUnit Tests
-        path: build/test-results/test/*.xml
-        reporter: java-junit
+        name: test-results-windows
+        path: |
+          build/reports/tests/
+          build/test-results/
