@@ -26,3 +26,17 @@ kotlin {
 application {
     mainClass.set("MainKt")
 }
+tasks {
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+}
+
+ktlint {
+    version.set("0.50.0")
+    verbose.set(true)
+    outputToConsole.set(true)
+}
