@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     application
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "org.example"
@@ -11,21 +12,16 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(17)
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("org.example.MainKt")
 }
+
 tasks {
     test {
         useJUnitPlatform()
