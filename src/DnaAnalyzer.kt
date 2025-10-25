@@ -6,6 +6,7 @@ class DnaAnalyzer(dna_sequence: String) {
     private val rna_sequence : String
     val mino_acid_list = mutableListOf<AminoAcidSequence>()
     var counter_proteins =0
+    val length_triplet = 3
 
     init{
         validate_dna = dna_sequence.uppercase()
@@ -16,8 +17,8 @@ class DnaAnalyzer(dna_sequence: String) {
 
     fun KeepOrfToList(i:Int) :String{
         val protein_builder = StringBuilder()
-        for (k in i until rna_sequence.length-3 step 3){
-            val codon = rna_sequence.substring(k,k+3)
+        for (k in i until rna_sequence.length-length_triplet step length_triplet){
+            val codon = rna_sequence.substring(k,k+length_triplet)
             if (CodonTable.table[codon]=='B'){
                 break
             }
@@ -31,8 +32,8 @@ class DnaAnalyzer(dna_sequence: String) {
         var protein_sequence:String
 
 
-        for(i in 0 until rna_sequence.length-3 step 3){
-            if(rna_sequence.substring(i,i+3)=="AUG"){
+        for(i in 0 until rna_sequence.length-length_triplet step length_triplet){
+            if(rna_sequence.substring(i,i+length_triplet)=="AUG"){
                 protein_sequence = KeepOrfToList(i)
 
                 if (protein_sequence.length >=2)
@@ -49,16 +50,18 @@ class DnaAnalyzer(dna_sequence: String) {
 
 
     private fun validationDNA() {
+        val length_of_four_triplets = length_triplet*4
+        val multiplicity_length_triplet = length_triplet
         var testing_dna = validate_dna
         val stop_codon = listOf("TAA","TAG","TGA")
 
         if (testing_dna.filter{it !in "AGTC"}.toSet().isNotEmpty())
             throw IllegalArgumentException("DNA consist onle A, C, G, T amino acid")
 
-        if (testing_dna.length<12 || testing_dna.isEmpty())
+        if (testing_dna.length<length_of_four_triplets || testing_dna.isEmpty())
             throw IllegalArgumentException("DNA can't be empty or had length < 6 and must include 2 amino acid")
 
-        if (testing_dna.length%3!=0)
+        if (testing_dna.length%multiplicity_length_triplet!=0)
             throw IllegalArgumentException("DNA length must be divisible by three")
 
         if (testing_dna.contains("ATG").not())
