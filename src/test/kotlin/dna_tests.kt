@@ -1,15 +1,13 @@
-package org.example  // или ваш пакет
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 
 class DnaAnalyzerTest {
 
     @Test
-    @DisplayName("Тест 1: валидная DNA последовательность ATGGCTAGTTGA")
-    fun test1_ValidDnaSequence_ShouldFindOrfs() {
+    @DisplayName("Валидная DNA последовательность ATGGCTAGTTGA")
+    fun `valid dna sequence ATGGCTAGTTGA should find ORFs`() {
         // given
         val dnaAnalyzer = DnaAnalyzer("ATGGCTAGTTGA")
         
@@ -22,8 +20,8 @@ class DnaAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Тест 2: валидная DNA последовательность ATGGCTAGTTGAATGGAT")
-    fun test2_ValidDnaSequenceWithMultipleOrfs_ShouldFindAllOrfs() {
+    @DisplayName("Валидная DNA последовательность ATGGCTAGTTGAATGGAT")
+    fun `valid dna sequence ATGGCTAGTTGAATGGAT should find all ORFs`() {
         // given
         val dnaAnalyzer = DnaAnalyzer("ATGGCTAGTTGAATGGAT")
         
@@ -36,10 +34,10 @@ class DnaAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Тест 3: невалидная DNA последовательность ATGXYZ - должна выбрасывать исключение")
-    fun test3_InvalidDnaSequence_ShouldThrowException() {
-        // given & when & then
-        val exception = assertThrows(IllegalArgumentException::class.java) {
+    @DisplayName("Невалидная DNA последовательность ATGXYZ должна выбрасывать исключение")
+    fun `invalid dna sequence ATGXYZ should throw exception`() {
+        // when & then
+        val exception = assertThrows<IllegalArgumentException> {
             DnaAnalyzer("ATGXYZ")
         }
         
@@ -47,8 +45,8 @@ class DnaAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Тест 4: короткая DNA последовательность ATGGCT")
-    fun test4_ShortDnaSequence_ShouldHandleCorrectly() {
+    @DisplayName("Короткая DNA последовательность ATGGCT")
+    fun `short dna sequence ATGGCT should handle correctly`() {
         // given
         val dnaAnalyzer = DnaAnalyzer("ATGGCT")
         
@@ -60,8 +58,8 @@ class DnaAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Тест 5: DNA последовательность без старт-кодона GCTAGTTGA")
-    fun test5_DnaWithoutStartCodon_ShouldReturnEmptyOrNoOrfs() {
+    @DisplayName("DNA последовательность без старт-кодона GCTAGTTGA")
+    fun `dna without start codon GCTAGTTGA should return empty result`() {
         // given
         val dnaAnalyzer = DnaAnalyzer("GCTAGTTGA")
         
@@ -71,5 +69,23 @@ class DnaAnalyzerTest {
         // then
         assertNotNull(result)
         assertTrue(result.isEmpty(), "Для последовательности без старт-кодона должен возвращаться пустой результат")
+    }
+
+    @Test
+    @DisplayName("Пустая DNA последовательность должна выбрасывать исключение")
+    fun `empty dna sequence should throw exception`() {
+        // when & then
+        assertThrows<IllegalArgumentException> {
+            DnaAnalyzer("")
+        }
+    }
+
+    @Test
+    @DisplayName("DNA последовательность с недопустимыми символами")
+    fun `dna with invalid characters should throw exception`() {
+        // when & then
+        assertThrows<IllegalArgumentException> {
+            DnaAnalyzer("ATG123ATCG")
+        }
     }
 }
