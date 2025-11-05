@@ -1,5 +1,6 @@
 
 //======================= CLASS DNA_ANALYZER ===========================//
+package org.example
 class DnaAnalyzer(dna_sequence: String) {
 
     private val validate_dna : String
