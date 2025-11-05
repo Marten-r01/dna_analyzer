@@ -1,4 +1,4 @@
-name: Java CI with Gradle on Windows
+name: Java CI with Gradle
 
 on:
   push:
@@ -7,8 +7,11 @@ on:
     branches: [ "master", "develop" ]
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     
     steps:
     - name: Checkout code
@@ -20,34 +23,57 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Display Windows info
+    - name: Validate Gradle Wrapper
       run: |
-        echo "Running on Windows"
-        systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          if [ -f "gradlew.bat" ]; then
+            echo "gradlew.bat exists"
+          else
+            echo "Generating gradlew.bat"
+            gradle wrapper
+          fi
+        else
+          chmod +x gradlew
+        fi
+        
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
         
     - name: Build with Gradle
-      run: .\gradlew.bat build
+      run: |
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          .\gradlew.bat build -x test
+        else
+          ./gradlew build -x test
+        fi
       
     - name: Run tests
-      run: .\gradlew.bat test
-      
-    - name: Run tests with detailed output
-      run: .\gradlew.bat test --info
+      run: |
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          .\gradlew.bat test
+        else
+          ./gradlew test
+        fi
       
     - name: Check code style with ktlint
-      run: .\gradlew.bat ktlintCheck
-      
-    - name: Generate test report
-      if: always()
       run: |
-        .\gradlew.bat test
-        echo "Test results generated in build/reports/tests/"
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          .\gradlew.bat ktlintCheck
+        else
+          ./gradlew ktlintCheck
+        fi
         
-    - name: Upload test results
-      if: failure()
-      uses: actions/upload-artifact@v4
+    - name: Publish Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
       with:
-        name: test-results-windows
-        path: |
-          build/reports/tests/
-          build/test-results/
+        name: JUnit Tests - ${{ matrix.os }}
+        path: build/test-results/test/*.xml
+        reporter: java-junit
