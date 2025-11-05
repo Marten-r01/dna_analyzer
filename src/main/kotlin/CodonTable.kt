@@ -1,5 +1,5 @@
 //========================= OBJECT CODON_TABLE ========================================//
-
+package org.example
 object CodonTable {
     val table: Map<String, Char> = mapOf(
         "AUG" to 'M',
