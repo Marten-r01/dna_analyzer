@@ -37,3 +37,7 @@ ktlint {
     verbose.set(true)
     outputToConsole.set(true)
 }
+
+detekt {
+    config = files("detekt-config.yml")
+}
