@@ -14,8 +14,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    //testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     //testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }
 
@@ -26,16 +26,11 @@ application {
 tasks {
     test {
         useJUnitPlatform()
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
     }
 }
 
-ktlint {
-    version.set("0.50.0")
-    verbose.set(true)
-    outputToConsole.set(true)
+kotlin {
+    jvmToolchain(17)
 }
 
 detekt {
