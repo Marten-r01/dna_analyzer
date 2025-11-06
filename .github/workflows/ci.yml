@@ -2,78 +2,57 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: 
+        - master
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: 
+        - master
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    
+    runs-on: windows-10
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
         
-    - name: Validate Gradle Wrapper
-      run: |
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          if [ -f "gradlew.bat" ]; then
-            echo "gradlew.bat exists"
-          else
-            echo "Generating gradlew.bat"
-            gradle wrapper
-          fi
-        else
-          chmod +x gradlew
-        fi
+    - name: chmod for Gradle Wrapper
+      run: chmod +x ./gradlew
         
-    - name: Cache Gradle dependencies
-      uses: actions/cache@v3
+    - name: Build project
+      run: ./gradlew build -x test
+        
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v5
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+          name: build-libs
+          path: build/libs/*.jar
+  test:
+    runs-on: windows-10
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: chmod for Gradle Wrapper
+        run: chmod +x ./gradlew
         
-    - name: Build with Gradle
-      run: |
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          .\gradlew.bat build -x test
-        else
-          ./gradlew build -x test
-        fi
-      
-    - name: Run tests
-      run: |
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          .\gradlew.bat test
-        else
-          ./gradlew test
-        fi
-      
-    - name: Check code style with ktlint
-      run: |
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          .\gradlew.bat ktlintCheck
-        else
-          ./gradlew ktlintCheck
-        fi
+      - name: Run tests
+        run: ./gradlew test
         
-    - name: Publish Test Report
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: JUnit Tests - ${{ matrix.os }}
-        path: build/test-results/test/*.xml
-        reporter: java-junit
+      
+      - name: Check code style with ktlint
+        run: ./gradlew ktlintCheck
+        
+      
