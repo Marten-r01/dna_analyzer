@@ -1,0 +1,9 @@
+style:
+  FunctionNaming:
+    active: false
+  VariableNaming:
+    active: false
+  MagicNumber:
+    active: false
+  InvalidPackageDeclaration:
+    active: false
