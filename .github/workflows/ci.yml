@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     
-    runs-on: windows-10
+    runs-on: windows-latest
     
     steps:
     - name: Checkout code
@@ -35,7 +35,7 @@ jobs:
           name: build-libs
           path: build/libs/*.jar
   test:
-    runs-on: windows-10
+    runs-on: windows-latest
     needs: build
 
     steps:
