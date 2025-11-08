@@ -35,5 +35,8 @@ kotlin {
 }
 
 detekt {
-    config = files("detekt-config.yml")
+    //config = files("detekt-config.yml")
+    toolVersion = "2.0.0-alpha.1"
+    config.setFrom(file("detekt-config.yml"))
+    buildUponDefaultConfig = true
 }
