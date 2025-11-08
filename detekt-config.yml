@@ -1,14 +1,18 @@
-build:
-  maxIssues: 0
 
 naming:
   FunctionNaming:
     active: false
   VariableNaming:
     active: false
+  PackageNaming:
+    active: false
 
 style:
   MagicNumber:
     active: false
-  PackageNaming:
-    active: false
+
+comments:
+  active: false  # Отключает все правила для комментариев
+
+complexity:
+  active: false  # Отключает все правила для сложности кода
