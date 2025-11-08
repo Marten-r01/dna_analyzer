@@ -36,5 +36,4 @@ kotlin {
 
 detekt {
     config = files("detekt-config.yml")
-    ignoreFailures = true
 }
