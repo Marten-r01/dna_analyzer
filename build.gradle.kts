@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.0"
     application
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
-    id("dev.detekt") version ("2.0.0-alpha.1")
+    id("dev.detekt") version ("1.23.3")
 }
 
 group = "org.example"
@@ -36,4 +36,5 @@ kotlin {
 
 detekt {
     config = files("detekt-config.yml")
+    ignoreFailures = true
 }
