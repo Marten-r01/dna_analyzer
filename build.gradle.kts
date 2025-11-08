@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    testImplementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    testImplementation("org.jetbrains.ktlin:ktlin-stdlib:1.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testImplementation(kotlin("test"))
     //testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
