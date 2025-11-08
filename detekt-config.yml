@@ -1,9 +1,14 @@
-style:
+build:
+  maxIssues: 0
+
+naming:
   FunctionNaming:
     active: false
   VariableNaming:
     active: false
+
+style:
   MagicNumber:
     active: false
-  InvalidPackageDeclaration:
+  PackageNaming:
     active: false
