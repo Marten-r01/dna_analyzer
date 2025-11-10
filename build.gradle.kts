@@ -26,7 +26,10 @@ tasks.test {
         events("passed", "skipped", "failed")
     }
 }
-
+// Добавьте этот блок в корень build.gradle.kts
+kotlin {
+    jvmToolchain(21)  // Явно указываем JDK 21
+}
 ktlint {
     verbose.set(true)
     outputToConsole.set(true)
