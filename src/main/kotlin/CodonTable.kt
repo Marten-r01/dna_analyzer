@@ -1,4 +1,5 @@
 @file:Suppress("ktlint")
+
 // ========================= OBJECT CODON_TABLE ========================================//
 package org.example
 

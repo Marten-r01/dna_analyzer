@@ -1,4 +1,5 @@
 @file:Suppress("ktlint")
+
 // ======================= CLASS DNA_ANALYZER ===========================//
 package org.example
 
