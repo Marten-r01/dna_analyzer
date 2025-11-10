@@ -1,0 +1,18 @@
+
+naming:
+  FunctionNaming:
+    active: false
+  VariableNaming:
+    active: false
+  PackageNaming:
+    active: false
+
+style:
+  MagicNumber:
+    active: false
+
+comments:
+  active: false  # Отключает все правила для комментариев
+
+complexity:
+  active: false  # Отключает все правила для сложности кода
