@@ -1,14 +1,13 @@
+@file:Suppress("ktlint")
+package org.example
 
-
-fun main(){
-
+fun main()  {
     println("Inpute sequence:_")
-    try{
+    try {
         val user_sequence: String = readLine().toString()
         val user_search = DnaAnalyzer(user_sequence)
         println("result: ${user_search.findAllOrfs()} ")
-    }catch (e: IllegalArgumentException){
+    } catch (e: IllegalArgumentException) {
         println("output error : ${e.message}")
     }
-
 }

@@ -6,6 +6,6 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+        id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
     }
 }
